@@ -23,15 +23,7 @@ public class Jugador {
         this.totalValoresCartas = 0;
 
     }
-    public String mostrarCartas(){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0;i < cartas.size(); i++){
-            sb.append(cartas.get(i).toString());
 
-        }
-        return  sb.toString();
-
-    }
 
     @Override
     public String toString() {
@@ -69,6 +61,10 @@ public class Jugador {
     public void setHasAce(boolean hasAce){
         this.hasAce = hasAce;
 
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     public boolean isHasAce() {

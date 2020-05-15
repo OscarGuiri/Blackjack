@@ -21,6 +21,8 @@ public class Blackjack {
 
                     break;
                 case 2:
+                    System.out.println("Ganadas CPU: " + JugarJuego.getnVecesaGanadasCPU());
+                    System.out.println("Ganadas jugadores: " + JugarJuego.getnVecesaGanadasJugador());
 
                     break;
                 case 3:
@@ -62,7 +64,7 @@ public class Blackjack {
        // Creo la mesa
        Mesa mesa = new Mesa(saldoMesa);
        //Empiezo la partida
-       jugarJuego = new JugarJuego(nJugadores, mesa, jugadores);
+       jugarJuego = new JugarJuego( mesa, jugadores);
        jugarJuego.empezarPartida();
 
    }
