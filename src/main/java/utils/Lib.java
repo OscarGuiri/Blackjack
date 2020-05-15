@@ -1,5 +1,6 @@
 package utils;
 
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -83,5 +84,6 @@ public class Lib {
         Random r = new Random();
         return min + r.nextFloat() * (max - min);
     }
+
 
 }

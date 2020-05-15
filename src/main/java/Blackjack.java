@@ -4,15 +4,20 @@ import java.util.Scanner;
 
 public class Blackjack {
     private Scanner lector;
-   public Blackjack(){
-       int opcion = 0;
-       Carta carta = new Carta(Carta.PALO.TREBOLE, 2, Carta.COLOR.RED);
-       System.out.printf(carta.toString());
+    private JugarJuego jugarJuego;
+    private static int nVecesGadadasJugador;
+    private static int getnVecesGadadasCPU;
+
+    public Blackjack(double saldoJugadores, double saldoMesa) {
+
+        int opcion = 0;
+
 
         do {
             opcion = menuPrincipal();
             switch (opcion) {
                 case 1:
+                   nuevaPartida(saldoMesa,saldoJugadores);
 
                     break;
                 case 2:
@@ -30,6 +35,39 @@ public class Blackjack {
             }
         } while (opcion != 0);
     }
+
+    /**
+     * Jugar una partida nueva
+     * @param saldoMesa
+     */
+   public void nuevaPartida(double saldoMesa, double saldoJugador){
+       int nJugadores;
+       String nombre = "";
+       //Pido cuantos jugadores hay
+       do {
+           System.out.println("Cualtos jugadores habran?");
+           nJugadores = Lib.pedirInt("Jugadores", false);
+           if(nJugadores > 7){
+               System.out.println("Este juego solo permite hasta 7 jugadores");
+           }
+       }while (nJugadores > 7);
+       Jugador[] jugadores = new Jugador[nJugadores];
+
+       for(int i = 0; i < jugadores.length; i++){
+           System.out.println("Como se llama el jugador " + (i+1) + "?");
+           nombre = Lib.pedirString("Jugador");
+           jugadores[i] = new Jugador(saldoJugador, nombre);
+       }
+
+       // Creo la mesa
+       Mesa mesa = new Mesa(saldoMesa);
+       //Empiezo la partida
+       jugarJuego = new JugarJuego(nJugadores, mesa, jugadores);
+       jugarJuego.empezarPartida();
+
+   }
+
+
 
     /**
      * Imprime el menu principal
