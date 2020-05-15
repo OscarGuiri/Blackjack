@@ -19,12 +19,30 @@ public class Jugador {
         this.id = nId++;
         this.nombre = nombre;
         tieneBlackjack = false;
-        ganado = false;
+        this.ganado = false;
         this.totalValoresCartas = 0;
 
     }
 
+    /**
+     * Consigue los valores de las cartas del jugador
+     * @return
+     */
+    public int getTotalValorCartasJugador(){
+        int totalValorCartas = 0;
+        for(int i = 0; i < cartas.size(); i++){
+            totalValorCartas += cartas.get(i).getValorId(cartas.get(i).getId());
 
+        }
+        this.totalValoresCartas = totalValorCartas;
+        return  totalValorCartas;
+
+    }
+
+    public void restarTotalValorCartasJugador(int  totalValorCartasJugador){
+        this.totalValoresCartas -= this.totalValoresCartas - totalValorCartasJugador;
+
+    }
     @Override
     public String toString() {
         return "Jugador{" +
@@ -44,20 +62,8 @@ public class Jugador {
         this.ganado = ganado;
     }
 
-    public int getTotalValorCartasJugador(){
-        int totalValorCartas = 0;
-        for(int i = 0; i < cartas.size(); i++){
-            totalValorCartas += cartas.get(i).getValorId(cartas.get(i).getId());
 
-        }
-        this.totalValoresCartas = totalValorCartas;
-        return  totalValorCartas;
 
-    }
-    public void restarTotalValorCartasJugador(int  totalValorCartasJugador){
-        this.totalValoresCartas -= this.totalValoresCartas - totalValorCartasJugador;
-
-    }
     public void setHasAce(boolean hasAce){
         this.hasAce = hasAce;
 

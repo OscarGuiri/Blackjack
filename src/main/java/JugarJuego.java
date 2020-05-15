@@ -1,6 +1,5 @@
-import org.w3c.dom.ls.LSOutput;
-import utils.Lib;
 
+import utils.Lib;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,6 +25,7 @@ public class JugarJuego {
         mesa.mezclarCartas();
         pedirApuestas(); // Pido las apuestas
         generarCartasPrincipales(); // Genero las cartas para empezar la partida
+
         for (int i = 0; i < jugadores.length; i++) {
             System.out.println(jugadores[i].getNombre());
             mesa.imprimirCartas(jugadores[i]);
@@ -42,6 +42,7 @@ public class JugarJuego {
             // Todos pierden.
             for (int i = 0; i < jugadores.length; i++) {
                 mesa.getBanco().setDinero(jugadores[i].getApuesta() + mesa.getBanco().getDinero());
+                jugadores[i].setDinero(jugadores[i].getDinero() - jugadores[i].getApuesta());
                 jugadores[i].setApuesta(0); // Vuelvo a poner la apuesta a 0
             }
 
@@ -62,8 +63,8 @@ public class JugarJuego {
      */
     public void midGame() {
         int opcion = 0;
-        int totalValorCartasJugador = 0;
-        boolean doblar = false;
+
+        boolean doblar;
 
 
         for (int i = 0; i < jugadores.length; i++) { // Recorro los jugadores para ver si uno tiene blackjack
@@ -85,8 +86,9 @@ public class JugarJuego {
                 doblar = preguntarDoblarApuesta();
 
                 // Compuebo si el jugador quiere doblar y si tiene el dinero suficiente para hacerlo
-                if (doblar && ((jugadores[i].getApuesta() * 2)) - jugadores[i].getDinero() >= 0) {
+                if (doblar) {
                     jugadores[i].setApuesta(jugadores[i].getApuesta() * 2);
+                    System.out.println("APUESTA DOBLADA");
                 }
 
 
@@ -163,6 +165,7 @@ public class JugarJuego {
                         if (!jugadores[i].isTieneBlackjack()) {
                             mesa.getBanco().setDinero(mesa.getBanco().getDinero() + jugadores[i].getApuesta());
                             System.out.println("Jugador " + (i + 1) + " pierde " + jugadores[i].getApuesta());
+                            jugadores[i].setDinero(jugadores[i].getDinero() - jugadores[i].getApuesta());
                         }
                     }
 
@@ -172,10 +175,16 @@ public class JugarJuego {
                     salir = true;
                     System.out.println("BUST PARA EL BANCO");
                     for (int i = 0; i < jugadores.length; i++) {
-                        if (!jugadores[i].isTieneBlackjack()) {
+                        if (!jugadores[i].isTieneBlackjack() || !jugadores[i].isGanado()) {
                             jugadores[i].setDinero(jugadores[i].getDinero() + jugadores[i].getApuesta());
                             mesa.getBanco().setDinero(mesa.getBanco().getDinero() - jugadores[i].getApuesta());
-                            System.out.println("Jugador " + (i + 1) + " pierde " + jugadores[i].getApuesta());
+                            System.out.println("Jugador " + (i + 1) + " Gana " + jugadores[i].getApuesta());
+                            if(jugadores[i].getTotalValorCartasJugador() < 21) {
+                                jugadores[i].setDinero(jugadores[i].getDinero() + jugadores[i].getApuesta());
+                            }
+                        }else{
+                            System.out.println("Jugador " + (i + 1) + " pierda " + jugadores[i].getApuesta());
+                            jugadores[i].setDinero(jugadores[i].getDinero() - jugadores[i].getApuesta());
                         }
                     }
                 }
@@ -183,15 +192,16 @@ public class JugarJuego {
 
             } else {
                 for (int i = 0; i < jugadores.length; i++) {
-                    if (jugadores[i].getTotalValorCartasJugador() > mesa.getBanco().getTotalValorCartasJugador() && !jugadores[i].isTieneBlackjack() || jugadores[i].isGanado())  {
+                    if (jugadores[i].getTotalValorCartasJugador() > mesa.getBanco().getTotalValorCartasJugador() || jugadores[i].isGanado())  {
                         System.out.println(jugadores[i].getNombre() + " a ganado!");
                         if(!jugadores[i].isTieneBlackjack()) {
                             jugadores[i].setDinero(jugadores[i].getDinero() + jugadores[i].getApuesta());
                         }
                         nVecesaGanadasJugador++;
-                    } else if (!jugadores[i].isGanado()) {
+                    } else{
                         System.out.println(jugadores[i].getNombre() + " a perdido!");
                         nVecesaGanadasCPU++;
+                        jugadores[i].setDinero(jugadores[i].getDinero() - jugadores[i].getApuesta());
                         mesa.getBanco().setDinero(mesa.getBanco().getDinero() + jugadores[i].getApuesta());
                     }
                 }
@@ -215,6 +225,7 @@ public class JugarJuego {
             jugadores[i].setTieneBlackjack(false);
             jugadores[i].setCartas(new ArrayList < > ());
             jugadores[i].setGanado(false);
+            mesa.getBanco().setHasAce(false);
 
         }
     }
@@ -245,6 +256,12 @@ public class JugarJuego {
         } while (!valido);
         return doblar;
     }
+
+    /**
+     *
+     * Pregunta al usuario si quiere realizar otra ronda
+     * @return
+     */
     public boolean preguntarOtraRonda() {
         lector = new Scanner(System.in);
         boolean opcion = false;
@@ -335,9 +352,15 @@ public class JugarJuego {
 
                 aux = dineroBando - (apuesta * 1.5); // Si el banco no tiene los creditos suficientes por si gana el jugador, vuelve a pedir la apuesta
                 if (aux >= 0) {
-                    validado = true;
+                    if(jugadores[i].getDinero() >= apuesta) {
+                        validado = true;
+
+                    }else{
+                        System.out.println("No tienes dinero para realizar esta apuesta.");
+                    }
+
                 } else {
-                    System.out.println("El banco no tiene los creditos para apostar " + apuesta);
+                    System.out.println("El banco no tiene los creditos para apostar. " + apuesta);
                 }
 
             } while (!validado);
@@ -372,7 +395,15 @@ public class JugarJuego {
         cartasBanco.add(mesa.sacarCarta());
         cartasBanco.add(mesa.sacarCarta());
         cartasBanco.get(1).setOculto(true);
+
+        // Si la mesa recibe 2 hace, resto 10 puntos de valor para que no tenga un valor de 22 y que tenga un valor de 11
+        if(cartasBanco.get(0).isAce() || cartasBanco.get(0).isAce()){
+            mesa.getBanco().setHasAce(true);
+        }
         mesa.getBanco().setCartas(cartasBanco);
+        if(mesa.getBanco().isHasAce() && mesa.getBanco().getTotalValorCartasJugador() > 21){
+            mesa.getBanco().restarTotalValorCartasJugador(10);
+        }
     }
     //GETTERS AND SETTERS
 

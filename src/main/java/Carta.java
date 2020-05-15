@@ -135,7 +135,7 @@ public class Carta {
         }
 
 
-       return carta = sb.toString();
+       return  sb.toString();
 
     }
 

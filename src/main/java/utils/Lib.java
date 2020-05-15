@@ -43,7 +43,7 @@ public class Lib {
                 numero = Integer.parseInt(lector.nextLine());
                 validado = true;
                 if(numero < 0 && !posibleNegativo){
-                    System.out.println(nombreInt +  "no puede ser negativo");
+                    System.out.println(nombreInt +  " no puede ser negativo");
                     validado = false;
                 }
 

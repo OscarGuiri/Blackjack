@@ -50,7 +50,7 @@ public class Mesa {
 
         Carta.PALO palo = Carta.PALO.ERROR;
 
-        Carta.COLOR color = Carta.COLOR.ERROR;
+        Carta.COLOR color;
 
         for(int i = 0; i < cartas.length; i++){ // Recorro todas las castas
             if(auxColor == 0){ // Las cartas se crean azul y rojo 50/50
